@@ -1,4 +1,4 @@
-package htw.webtech.webtech26;
+package htw.webtech.taskwise;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

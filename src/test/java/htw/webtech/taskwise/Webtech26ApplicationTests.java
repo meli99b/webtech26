@@ -1,4 +1,4 @@
-package htw.webtech.webtech26;
+package htw.webtech.taskwise;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
