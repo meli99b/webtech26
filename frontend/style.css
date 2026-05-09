@@ -1,0 +1,150 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f7fb;
+  color: #1f2937;
+}
+
+.container {
+  max-width: 900px;
+  margin: 32px auto;
+  padding: 0 16px;
+}
+
+.task-list {
+  background: #ffffff;
+  border: 1px solid #d8e2f0;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.count {
+  margin-top: 0;
+  color: #4b5563;
+}
+
+.add-task-form {
+  margin: 12px 0 14px;
+}
+
+.add-task-form input {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 9px 10px;
+}
+
+.secondary {
+  border: 1px solid #c8d7f1;
+  background: #eef4ff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.meme-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+.meme-popup {
+  position: relative;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24);
+}
+
+.close-meme {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: none;
+  border-radius: 999px;
+  width: 28px;
+  height: 28px;
+  background: #111827;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.meme-image {
+  display: block;
+  max-width: min(92vw, 560px);
+  max-height: 80vh;
+  border-radius: 8px;
+}
+
+.meme-caption {
+  margin: 10px 4px 4px;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+.task-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+  background: #fbfdff;
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.task-header button {
+  border: 1px solid #2563eb;
+  color: #1d4ed8;
+  background: #eff6ff;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.task-header button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.subtasks {
+  margin-top: 8px;
+  padding-left: 16px;
+  list-style: disc;
+}
+
+.subtasks li {
+  margin: 4px 0;
+}
+
+.subtask-row {
+  list-style: none;
+}
+
+.subtask-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.done {
+  text-decoration: line-through;
+  color: #6b7280;
+}

@@ -1,29 +1,42 @@
 # TaskWise
 
-## Team Members
+## Teammitglieder
 - Melissa Bastas
 
-## Übungsgruppe / Dozent
--  2.Zug, 2. Gruppe
+## Uebungsgruppe / Dozent
+- 2. Zug, 2. Gruppe
 - Nasaltsev
 
-## Project Description
-TaskWise is a task management app designed especially for people with ADHD.
+## Projektbeschreibung
+TaskWise ist eine Aufgaben-App fuer Menschen mit ADHS.  
+Das Ziel ist, grosse Aufgaben in kleine, machbare Schritte zu zerlegen und so den Einstieg zu erleichtern.
 
-The app helps users break down large tasks into smaller, manageable steps
-and supports them with reminders and notifications. This reduces overwhelm
-and makes it easier to stay focused and productive.
+## Meilenstein 1 (Backend)
+- Spring-Boot-Backend laeuft lokal
+- GET-Endpunkt `/tasks` ist implementiert
+- Rueckgabe von Beispielaufgaben inklusive Teilaufgaben als JSON
 
-## Milestone 1 Features
-- Spring Boot backend application
-- GET endpoint: /tasks
-- Returns a list of example tasks (including subtasks)
+### Endpunkt
+- `GET http://localhost:8080/tasks`
 
-## Endpoint
-- GET http://localhost:8080/tasks
+### Meilenstein 1 starten
+1. Anwendung starten (`Webtech26Application`)
+2. Im Browser oeffnen: `http://localhost:8080/tasks`
+3. JSON-Antwort mit Aufgaben und Teilaufgaben pruefen
 
-## How to Run
-1. Start the application (Webtech26Application)
-2. Open browser:
-   http://localhost:8080/tasks
-3. You will see a JSON response with tasks and subtasks
+## Meilenstein 2 (Frontend)
+- Vue-Frontend im Ordner `frontend/`
+- Eigene Komponente `TaskList`
+- Listen-Rendering mit `v-for` (Aufgaben + Teilaufgaben)
+- Nutzer kann eine Aufgabe eingeben, die automatisch in kleine Schritte zerlegt wird
+- Teilaufgaben koennen einzeln abgehakt werden (Fortschritt pro Aufgabe sichtbar)
+- Meme-Popup bei zu vielen offenen Aufgaben (inkl. Bild aus `frontend/assets/itsfine.png`)
+
+### Frontend testen
+1. `frontend/index.html` im Browser oeffnen
+2. Aufgabe eingeben und `Enter` druecken
+3. Automatisch erzeugte Teilaufgaben pruefen
+4. Teilaufgaben abhaken und Fortschritt kontrollieren
+
+## Abgabe Meilenstein 2
+- Link zum Frontend-Repository auf GitHub
