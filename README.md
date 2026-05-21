@@ -50,9 +50,10 @@ Frontend und Backend laufen online; das Frontend holt die Aufgaben per `GET /tas
 
 ### Backend auf Render (Web Service)
 1. Auf [render.com](https://render.com) einloggen, neues **Web Service** aus dem GitHub-Repo.
-2. **Build Command:** `./gradlew build -x test`
-3. **Start Command:** `java -jar build/libs/webtech26-0.0.1-SNAPSHOT.jar`
-4. Nach dem Deploy testen: `https://taskwise-app.onrender.com/tasks` im Browser – JSON muss erscheinen.
+2. **Language:** Docker (Java steht oft nicht in der Liste).
+3. **Name:** `TaskWise-app` (für die URL `taskwise-app.onrender.com`).
+4. **Dockerfile Path:** `./Dockerfile` (Build/Start stehen in der Dockerfile – keine yarn-Commands).
+5. Nach dem Deploy testen: `https://taskwise-app.onrender.com/tasks` im Browser – JSON muss erscheinen.
 
 ### Frontend auf Render (Static Site)
 1. Neues **Static Site** aus demselben Repo.
