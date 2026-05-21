@@ -1,43 +1,28 @@
+function mapApiTask(apiTask) {
+  return {
+    id: apiTask.id,
+    title: apiTask.title,
+    done: apiTask.completed,
+    subtasks: (apiTask.subtasks || []).map((step) => ({
+      text: step.title,
+      done: step.completed,
+    })),
+  };
+}
+
 const TaskList = {
   name: "TaskList",
   data() {
     return {
-      tasks: [
-        {
-          id: 1,
-          title: "Make tomorrow less chaotic",
-          done: false,
-          subtasks: [
-            { text: "Open last week's notes and steal the useful bits", done: false },
-            { text: "Write 3 tiny bullet points, not a masterpiece", done: false },
-            { text: "Set a 10-minute timer and call it a win", done: false },
-          ],
-        },
-        {
-          id: 2,
-          title: "Rescue desk",
-          done: false,
-          subtasks: [
-            { text: "Collect and remove obvious trash first", done: false },
-            { text: "Move dishes to the kitchen in one trip", done: false },
-            { text: "Clear one desk zone so your brain can breathe", done: false },
-          ],
-        },
-        {
-          id: 3,
-          title: "Write that email you've been dodging",
-          done: false,
-          subtasks: [
-            { text: "Open inbox and ignore everything else for now", done: false },
-            { text: "Find the one email you've been avoiding", done: false },
-            { text: "Send a 2-minute reply and move on", done: false },
-          ],
-        },
-      ],
+      tasks: [],
+      apiStatus: "Lade Aufgaben vom Server …",
       showMemePopup: false,
       memeImageSrc: "./assets/itsfine.png",
       newTaskTitle: "",
     };
+  },
+  mounted() {
+    this.loadTasksFromApi();
   },
   computed: {
     openTasks() {
@@ -45,6 +30,20 @@ const TaskList = {
     },
   },
   methods: {
+    async loadTasksFromApi() {
+      try {
+        const response = await fetch(`${API_BASE}/tasks`);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        const data = await response.json();
+        this.tasks = data.map(mapApiTask);
+        this.apiStatus = `${this.tasks.length} Aufgaben vom Backend geladen.`;
+      } catch (error) {
+        this.apiStatus = `Backend nicht erreichbar (${API_BASE}/tasks). Lokal: Spring Boot starten.`;
+        console.error(error);
+      }
+    },
     createBreakdown(title) {
       const task = title.toLowerCase();
       const hasAny = (keywords) => keywords.some((keyword) => task.includes(keyword));
@@ -227,6 +226,7 @@ const TaskList = {
   template: `
     <section class="task-list">
       <h2>TaskWise - tiny wins for busy brains</h2>
+      <p class="api-status">{{ apiStatus }}</p>
       <p class="count">Active missions: {{ openTasks.length }}</p>
 
       <form class="add-task-form" @submit.prevent="addCustomTask">
