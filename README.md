@@ -25,18 +25,18 @@ Das Ziel ist, grosse Aufgaben in kleine, machbare Schritte zu zerlegen und so de
 3. JSON-Antwort mit Aufgaben und Teilaufgaben pruefen
 
 ## Meilenstein 2 (Frontend)
-- Vue-Frontend im Ordner `frontend/`
-- Eigene Komponente `TaskList`
-- Listen-Rendering mit `v-for` (Aufgaben + Teilaufgaben)
+- Vue-3-Projekt mit **Vite** im Ordner `frontend/` (wie im Skript Thema 4)
+- Struktur: `src/App.vue`, `src/components/TaskList.vue`
+- Eigene Komponente `TaskList` mit `v-for` (Aufgaben + Teilaufgaben)
 - Nutzer kann eine Aufgabe eingeben, die automatisch in kleine Schritte zerlegt wird
 - Teilaufgaben koennen einzeln abgehakt werden (Fortschritt pro Aufgabe sichtbar)
-- Meme-Popup bei zu vielen offenen Aufgaben (inkl. Bild aus `frontend/assets/itsfine.png`)
+- Meme-Popup bei zu vielen offenen Aufgaben (Bild in `frontend/src/assets/itsfine.png`)
 
-### Frontend testen
-1. `frontend/index.html` im Browser oeffnen
-2. Aufgabe eingeben und `Enter` druecken
-3. Automatisch erzeugte Teilaufgaben pruefen
-4. Teilaufgaben abhaken und Fortschritt kontrollieren
+### Frontend lokal starten
+1. `cd frontend`
+2. `npm install`
+3. `npm run dev` (Vite-Dev-Server, z. B. http://localhost:5173)
+4. Spring Boot parallel starten fuer Backend-Daten (`http://localhost:8080/tasks`)
 
 ## Abgabe Meilenstein 2
 - Link zum Frontend-Repository auf GitHub
@@ -46,24 +46,24 @@ Das Ziel ist, grosse Aufgaben in kleine, machbare Schritte zu zerlegen und so de
 Frontend und Backend laufen online; das Frontend holt die Aufgaben per `GET /tasks`.
 
 ### Vor dem Deploy
-1. In `frontend/config.js` bei `RENDER_BACKEND_URL` die Render-URL deines Backends eintragen (ohne `/tasks` am Ende).
+1. Backend-URL steht in `frontend/.env.production` (`VITE_API_BASE`, ohne `/tasks`).
 
 ### Backend auf Render (Web Service)
 1. Auf [render.com](https://render.com) einloggen, neues **Web Service** aus dem GitHub-Repo.
-2. **Language:** Docker (Java steht oft nicht in der Liste).
-3. **Name:** `TaskWise-app` (für die URL `taskwise-app.onrender.com`).
-4. **Dockerfile Path:** `./Dockerfile` (Build/Start stehen in der Dockerfile – keine yarn-Commands).
-5. Nach dem Deploy testen: `https://taskwise-app.onrender.com/tasks` im Browser – JSON muss erscheinen.
+2. **Language:** Docker, **Dockerfile Path:** `./Dockerfile`
+3. Nach dem Deploy testen: `https://webtech26.onrender.com/tasks` – JSON muss erscheinen.
 
 ### Frontend auf Render (Static Site)
-1. Neues **Static Site** aus demselben Repo.
-2. **Publish directory:** `frontend`
-3. Nach dem Deploy die Frontend-URL im Browser öffnen – Aufgaben vom Backend sollten erscheinen.
+1. **Static Site** aus demselben Repo (z. B. `webtech26-st`).
+2. **Root Directory:** `frontend`
+3. **Build Command:** `npm install && npm run build`
+4. **Publish directory:** `dist`
+5. Frontend-URL oeffnen – Aufgaben vom Backend sollten erscheinen.
 
 ### Lokal testen (vor Render)
 1. Spring Boot starten (`Webtech26Application`).
-2. `frontend/index.html` im Browser öffnen.
-3. Oben sollte stehen: „X Aufgaben vom Backend geladen“ (Daten von `http://localhost:8080/tasks`).
+2. `cd frontend` → `npm install` → `npm run dev`.
+3. Oben: „X Aufgaben vom Backend geladen“.
 
 ### Abgabe Meilenstein 3
-- Link zur deployten Backend-API: `https://taskwise-app.onrender.com/tasks`
+- Link zur deployten Backend-API: `https://webtech26.onrender.com/tasks`
