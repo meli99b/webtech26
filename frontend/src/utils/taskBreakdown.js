@@ -193,12 +193,52 @@ export function createBreakdown(title) {
     ]);
   }
 
-  const words = task.split(/\s+/).filter((w) => w.length > 3);
-  const focus = words.slice(0, 3).join(" ") || topic;
+  if (hasAny(task, ["cv", "resume", "lebenslauf", "curriculum vitae"])) {
+    return subtasks([
+      "List your last 2 roles with dates and 2 achievements each",
+      "Drop that into a simple one-page CV template",
+      "Proofread headings and export or save as PDF",
+    ]);
+  }
+
+  if (hasAny(task, ["apply", "application", "bewerbung", "bewerben", "job", "jobs", "career", "hiring"])) {
+    return subtasks([
+      "Find 3 job posts that roughly match your skills",
+      "Pick the best match and tweak your CV for it",
+      "Send one application today — cover letter can be short",
+    ]);
+  }
+
+  if (hasAny(task, ["interview", "vorstellungsgespräch", "gespräch"])) {
+    return subtasks([
+      `Read the job description again for "${topic}"`,
+      "Prepare 3 answers: strengths, project, why this role",
+      "Do a 5-minute practice intro out loud",
+    ]);
+  }
+
+  const stopWords = new Set([
+    "your", "the", "for", "and", "with", "from", "that", "this", "have", "make",
+    "create", "prepare", "finish", "complete", "start", "eine", "einen", "einem",
+  ]);
+  const words = task
+    .split(/\s+/)
+    .map((w) => w.replace(/[^a-zäöüß]/gi, ""))
+    .filter((w) => w.length > 2 && !stopWords.has(w));
+
+  if (words.length > 0) {
+    const action = words[0];
+    const object = words.slice(1, 4).join(" ") || topic;
+    return subtasks([
+      `Gather what you need to ${action} ${object}`,
+      `Do a 10-minute starter on ${object} — messy is fine`,
+      `Note the very next small step for ${object}`,
+    ]);
+  }
 
   return subtasks([
-    `Name the smallest first step for "${topic}"`,
-    `Spend 5 minutes only on "${focus}" — timer optional`,
-    `Decide the one next action after "${topic}" before you stop`,
+    `Write down what "done" means for "${topic}"`,
+    `Do one 5-minute starter step on "${topic}"`,
+    `Pick the next action before you stop working on "${topic}"`,
   ]);
 }

@@ -14,6 +14,8 @@ export default {
       showMemePopup: false,
       memeImageSrc,
       newTaskTitle: "",
+      editingTaskId: null,
+      editTitle: "",
     };
   },
   computed: {
@@ -81,6 +83,36 @@ export default {
       const allDone = task.subtasks.length > 0 && task.subtasks.every((item) => item.done);
       task.done = allDone;
     },
+    startEdit(task) {
+      this.editingTaskId = task.id;
+      this.editTitle = task.title;
+    },
+    cancelEdit() {
+      this.editingTaskId = null;
+      this.editTitle = "";
+    },
+    saveEdit(taskId) {
+      const title = this.editTitle.trim();
+      if (!title) {
+        return;
+      }
+
+      const task = this.tasks.find((item) => item.id === taskId);
+      if (!task) {
+        return;
+      }
+
+      task.title = title;
+      task.done = false;
+      task.subtasks = createBreakdown(title);
+      this.cancelEdit();
+    },
+    deleteTask(taskId) {
+      this.tasks = this.tasks.filter((task) => task.id !== taskId);
+      if (this.editingTaskId === taskId) {
+        this.cancelEdit();
+      }
+    },
     addExampleTasks() {
       const existingTitles = this.tasks.map((task) => task.title);
       const picked = pickExampleMissions(existingTitles, 3);
@@ -132,13 +164,42 @@ export default {
     <ul>
       <li v-for="task in tasks" :key="task.id" class="task-item">
         <div class="task-header">
-          <span :class="{ done: task.done }">
-            {{ task.title }}
-            ({{ completedSubtaskCount(task) }}/{{ task.subtasks.length }} steps)
-          </span>
-          <button type="button" @click="markDone(task.id)" :disabled="task.done">
-            {{ task.done ? "Win logged" : "Tiny win" }}
-          </button>
+          <div class="task-title-block">
+            <form
+              v-if="editingTaskId === task.id"
+              class="edit-task-form"
+              @submit.prevent="saveEdit(task.id)"
+            >
+              <input v-model="editTitle" type="text" class="edit-task-input" />
+              <div class="edit-actions">
+                <button type="submit" class="small-btn">Save</button>
+                <button type="button" class="small-btn secondary-btn" @click="cancelEdit">
+                  Cancel
+                </button>
+              </div>
+            </form>
+            <span v-else :class="{ done: task.done }">
+              {{ task.title }}
+              ({{ completedSubtaskCount(task) }}/{{ task.subtasks.length }} steps)
+            </span>
+          </div>
+
+          <div class="task-actions">
+            <button
+              v-if="editingTaskId !== task.id"
+              type="button"
+              class="small-btn secondary-btn"
+              @click="startEdit(task)"
+            >
+              Edit
+            </button>
+            <button type="button" class="small-btn danger-btn" @click="deleteTask(task.id)">
+              Delete
+            </button>
+            <button type="button" @click="markDone(task.id)" :disabled="task.done">
+              {{ task.done ? "Win logged" : "Tiny win" }}
+            </button>
+          </div>
         </div>
 
         <ul class="subtasks">

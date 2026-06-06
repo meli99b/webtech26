@@ -112,8 +112,21 @@ ul {
 .task-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
+  flex-wrap: wrap;
+}
+
+.task-title-block {
+  flex: 1;
+  min-width: 200px;
+}
+
+.task-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
 }
 
 .task-header button {
@@ -128,6 +141,46 @@ ul {
 .task-header button:disabled {
   opacity: 0.55;
   cursor: not-allowed;
+}
+
+.small-btn {
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #334155;
+  border-radius: 8px;
+  padding: 5px 9px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.secondary-btn {
+  background: #eef4ff;
+  border-color: #c8d7f1;
+  color: #1d4ed8;
+}
+
+.danger-btn {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+
+.edit-task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.edit-task-input {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 6px;
 }
 
 .subtasks {
