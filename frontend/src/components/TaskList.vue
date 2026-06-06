@@ -3,6 +3,7 @@ import memeImageSrc from "../assets/itsfine.png";
 import { API_BASE } from "../config.js";
 import { fetchTasks } from "../api.js";
 import { createBreakdown } from "../utils/taskBreakdown.js";
+import { pickExampleMissions } from "../utils/exampleMissions.js";
 
 export default {
   name: "TaskList",
@@ -81,36 +82,21 @@ export default {
       task.done = allDone;
     },
     addExampleTasks() {
-      const base = this.tasks.length + 1;
-      this.tasks.push(
-        {
-          id: base,
-          title: "Feed future-you with groceries",
+      const existingTitles = this.tasks.map((task) => task.title);
+      const picked = pickExampleMissions(existingTitles, 3);
+      let nextId = this.tasks.length
+        ? Math.max(...this.tasks.map((task) => task.id)) + 1
+        : 1;
+
+      picked.forEach((mission) => {
+        this.tasks.push({
+          id: nextId,
+          title: mission.title,
           done: false,
-          subtasks: [
-            { text: "Check fridge like a detective", done: false },
-            { text: "Write 5 essentials only", done: false },
-          ],
-        },
-        {
-          id: base + 1,
-          title: "Tiny study sprint",
-          done: false,
-          subtasks: [
-            { text: "Pick one chapter section", done: false },
-            { text: "Start 30-minute timer and begin ugly", done: false },
-          ],
-        },
-        {
-          id: base + 2,
-          title: "Laundry but make it painless",
-          done: false,
-          subtasks: [
-            { text: "Sort clothes into two easy piles", done: false },
-            { text: "Start machine and walk away", done: false },
-          ],
-        }
-      );
+          subtasks: mission.subtasks,
+        });
+        nextId += 1;
+      });
     },
     closeMemePopup() {
       this.showMemePopup = false;

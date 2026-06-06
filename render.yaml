@@ -1,0 +1,15 @@
+# Render Blueprint – korrekte Deploy-Einstellungen
+services:
+  - type: web
+    name: webtech26
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: frankfurt
+
+  - type: web
+    name: webtech26-st
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    region: frankfurt
