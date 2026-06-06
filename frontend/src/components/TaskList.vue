@@ -164,40 +164,33 @@ export default {
     <ul>
       <li v-for="task in tasks" :key="task.id" class="task-item">
         <div class="task-header">
-          <div class="task-title-block">
-            <form
-              v-if="editingTaskId === task.id"
-              class="edit-task-form"
-              @submit.prevent="saveEdit(task.id)"
-            >
-              <input v-model="editTitle" type="text" class="edit-task-input" />
-              <div class="edit-actions">
-                <button type="submit" class="small-btn">Save</button>
-                <button type="button" class="small-btn secondary-btn" @click="cancelEdit">
-                  Cancel
-                </button>
-              </div>
-            </form>
-            <span v-else :class="{ done: task.done }">
-              {{ task.title }}
-              ({{ completedSubtaskCount(task) }}/{{ task.subtasks.length }} steps)
-            </span>
-          </div>
+          <form
+            v-if="editingTaskId === task.id"
+            class="edit-task-form"
+            @submit.prevent="saveEdit(task.id)"
+          >
+            <input v-model="editTitle" type="text" class="edit-task-input" />
+            <div class="edit-actions">
+              <button type="submit" class="small-btn">Speichern</button>
+              <button type="button" class="small-btn secondary-btn" @click="cancelEdit">
+                Abbrechen
+              </button>
+            </div>
+          </form>
+          <span v-else class="task-title" :class="{ done: task.done }">
+            {{ task.title }}
+            ({{ completedSubtaskCount(task) }}/{{ task.subtasks.length }} steps)
+          </span>
 
-          <div class="task-actions">
-            <button
-              v-if="editingTaskId !== task.id"
-              type="button"
-              class="small-btn secondary-btn"
-              @click="startEdit(task)"
-            >
-              Edit
+          <div v-if="editingTaskId !== task.id" class="task-actions">
+            <button type="button" class="small-btn secondary-btn" @click="startEdit(task)">
+              Bearbeiten
             </button>
             <button type="button" class="small-btn danger-btn" @click="deleteTask(task.id)">
-              Delete
+              Löschen
             </button>
-            <button type="button" @click="markDone(task.id)" :disabled="task.done">
-              {{ task.done ? "Win logged" : "Tiny win" }}
+            <button type="button" class="small-btn win-btn" @click="markDone(task.id)" :disabled="task.done">
+              {{ task.done ? "Erledigt" : "Tiny win" }}
             </button>
           </div>
         </div>

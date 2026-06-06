@@ -111,22 +111,22 @@ ul {
 
 .task-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.task-title-block {
-  flex: 1;
-  min-width: 200px;
+.task-title {
+  font-weight: 600;
+  line-height: 1.4;
 }
 
 .task-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
+  padding-top: 4px;
+  border-top: 1px solid #e5e7eb;
 }
 
 .task-header button {
@@ -163,6 +163,17 @@ ul {
   background: #fef2f2;
   border-color: #fecaca;
   color: #b91c1c;
+}
+
+.win-btn {
+  background: #eff6ff;
+  border-color: #2563eb;
+  color: #1d4ed8;
+}
+
+.win-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .edit-task-form {
