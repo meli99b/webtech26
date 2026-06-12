@@ -67,3 +67,26 @@ Frontend und Backend laufen online; das Frontend holt die Aufgaben per `GET /tas
 
 ### Abgabe Meilenstein 3
 - Link zur deployten Backend-API: `https://webtech26.onrender.com/tasks`
+
+## Meilenstein 4 (PostgreSQL + POST)
+
+1. PostgreSQL auf Render erstellen
+2. JPA-Entities (`Task`, `Subtask`), `TaskRepository`, `TaskService`
+3. `GET /tasks` liest aus der DB, `POST /tasks` speichert eine neue Aufgabe
+4. Frontend sendet neue Aufgaben per `fetch(POST)`
+
+### PostgreSQL auf Render
+1. Dashboard → **New +** → **PostgreSQL** (Region Frankfurt)
+2. Datenbank erstellen, z. B. `webtech26-db`
+3. Web Service **webtech26** → **Environment** → PostgreSQL verknuepfen **oder** manuell:
+   - `SPRING_DATASOURCE_URL` = `jdbc:postgresql://HOST:5432/DATABASE` (ohne User im URL-String)
+   - `SPRING_DATASOURCE_USERNAME` = User aus Render
+   - `SPRING_DATASOURCE_PASSWORD` = Passwort aus Render
+4. Backend neu deployen
+
+### Lokal testen (ohne PostgreSQL)
+- Spring Boot nutzt **H2 im Speicher**, wenn keine Env-Vars gesetzt sind
+- Neue Aufgabe eingeben → `POST /tasks` → nach Reload noch da (solange Backend laeuft)
+
+### Abgabe Meilenstein 4
+- Link zum deployten **Frontend**: `https://webtech26-st.onrender.com`

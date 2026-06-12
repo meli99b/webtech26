@@ -1,7 +1,7 @@
 <script>
 import memeImageSrc from "../assets/itsfine.png";
 import { API_BASE } from "../config.js";
-import { fetchTasks } from "../api.js";
+import { createTask, fetchTasks } from "../api.js";
 import { createBreakdown } from "../utils/taskBreakdown.js";
 import { pickExampleMissions } from "../utils/exampleMissions.js";
 
@@ -44,21 +44,26 @@ export default {
         console.error(error);
       }
     },
-    addCustomTask() {
+    async addCustomTask() {
       const title = this.newTaskTitle.trim();
       if (!title) {
         return;
       }
 
-      const nextId = this.tasks.length ? Math.max(...this.tasks.map((task) => task.id)) + 1 : 1;
-      this.tasks.unshift({
-        id: nextId,
+      const draft = {
         title,
-        done: false,
         subtasks: createBreakdown(title),
-      });
+      };
 
-      this.newTaskTitle = "";
+      try {
+        const saved = await createTask(draft);
+        this.tasks.unshift(saved);
+        this.apiStatus = "Aufgabe in der Datenbank gespeichert.";
+        this.newTaskTitle = "";
+      } catch (error) {
+        this.apiStatus = `Speichern fehlgeschlagen (${API_BASE}/tasks).`;
+        console.error(error);
+      }
     },
     completedSubtaskCount(task) {
       return task.subtasks.filter((subtask) => subtask.done).length;
