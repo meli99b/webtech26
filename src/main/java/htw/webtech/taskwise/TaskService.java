@@ -3,7 +3,6 @@ package htw.webtech.taskwise;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,10 +14,9 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<Task> findAll() {
-        List<Task> tasks = new ArrayList<>();
-        taskRepository.findAll().forEach(tasks::add);
-        return tasks;
+        return taskRepository.findAllWithSubtasks();
     }
 
     @Transactional
