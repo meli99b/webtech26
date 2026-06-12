@@ -15,6 +15,112 @@ function mainTopic(title) {
   return title.replace(/^(plan|prepare|organize|do|make|finish|complete)\s+/i, "").trim() || title;
 }
 
+function coreThing(title) {
+  return title
+    .toLowerCase()
+    .replace(/^(finish|complete|start|continue|resume)\s+(the\s+)?/i, "")
+    .replace(/\s+you\s+started.*$/i, "")
+    .replace(/\s+i\s+started.*$/i, "")
+    .replace(/\s+that\s+i\s+started.*$/i, "")
+    .trim();
+}
+
+const STOP_WORDS = new Set([
+  "your", "the", "for", "and", "with", "from", "that", "this", "have", "make",
+  "create", "prepare", "finish", "complete", "start", "need", "please", "just",
+  "eine", "einen", "einem", "einer", "das", "die", "der", "und", "für",
+]);
+
+function extractFocus(title) {
+  const cleaned = title
+    .toLowerCase()
+    .replace(/^(please\s+|i\s+need\s+to\s+|need\s+to\s+|have\s+to\s+|must\s+|should\s+)/i, "")
+    .replace(/^(finish|complete|start|continue|resume|do|make|organize|plan)\s+(the\s+|my\s+)?/i, "")
+    .replace(/\s+(you|i)\s+started.*$/i, "")
+    .replace(/\s+that\s+(you|i)\s+started.*$/i, "")
+    .trim();
+
+  const words = cleaned
+    .split(/\s+/)
+    .map((w) => w.replace(/[^a-zäöüß0-9-]/gi, ""))
+    .filter((w) => w.length > 2 && !STOP_WORDS.has(w));
+
+  if (words.length > 0) {
+    return words.slice(0, 4).join(" ");
+  }
+  return title.trim();
+}
+
+function detectIntent(task) {
+  if (/^(start|begin|anfangen|starte|anfang)/.test(task)) return "start";
+  if (/^(finish|complete|beenden|fertig|end|abschlie)/.test(task)) return "finish";
+  if (/^(buy|shop|get|order|kauf|hol|bestell)/.test(task)) return "buy";
+  if (/^(send|submit|email|mail|schick|abgib)/.test(task)) return "send";
+  if (/^(call|phone|ring|anruf|telefonier)/.test(task)) return "call";
+  if (/^(learn|study|lern|üb|revis|review)/.test(task)) return "learn";
+  if (/^(organize|sort|tidy|plan|aufräum|organisier|sortier)/.test(task)) return "organize";
+  if (/^(fix|repair|reparier|mend)/.test(task)) return "fix";
+  if (hasAny(task, ["finish", "complete", "beenden"]) && hasAny(task, ["start", "started", "angefangen"])) {
+    return "finish";
+  }
+  return "default";
+}
+
+function genericBreakdown(raw, task) {
+  const focus = extractFocus(raw);
+  const intent = detectIntent(task);
+
+  const templates = {
+    start: [
+      `Name the tiniest visible starting point for "${focus}"`,
+      "Gather only what you need for the first 10 minutes",
+      "Set a timer, do that first bit, then stop on purpose",
+    ],
+    finish: [
+      `Open or locate "${focus}" and list up to 3 things still undone`,
+      "Pick the easiest one — 10 minutes maximum",
+      "Do only that piece; write the next micro-step before you walk away",
+    ],
+    buy: [
+      `Write a short essentials-only list for "${focus}" (5 items max)`,
+      "Check what you already have so you do not double-buy",
+      "Buy or add one item to cart, then stop",
+    ],
+    send: [
+      `Open the draft or find what you need for "${focus}"`,
+      "Write a rough version in 2–4 sentences — ugly is fine",
+      "Send or submit it, then mark it done",
+    ],
+    call: [
+      `Find the contact info for "${focus}"`,
+      "Write one sentence: what you need from this call",
+      "Make the call and note the result",
+    ],
+    learn: [
+      `Pick one small slice of "${focus}" — one page or one section`,
+      "Set a 15-minute timer with zero multitasking",
+      "Write 3 bullet notes in your own words",
+    ],
+    organize: [
+      `Choose one visible zone for "${focus}" — not the whole thing`,
+      "Trash and obvious clutter first, one pile only",
+      "Stop when that zone is clearly better than before",
+    ],
+    fix: [
+      `Describe what is wrong with "${focus}" in one sentence`,
+      "Check tools or info within reach — no rabbit holes",
+      "Try the smallest fix for 15 minutes; stop if stuck",
+    ],
+    default: [
+      `Define "done" for "${focus}" in one short sentence`,
+      "What is the 2-minute version? Do that first",
+      "Set a 10-minute timer for the next small chunk, then note what comes after",
+    ],
+  };
+
+  return subtasks(templates[intent] || templates.default);
+}
+
 export function createBreakdown(title) {
   const raw = title.trim();
   const task = raw.toLowerCase();
@@ -217,28 +323,34 @@ export function createBreakdown(title) {
     ]);
   }
 
-  const stopWords = new Set([
-    "your", "the", "for", "and", "with", "from", "that", "this", "have", "make",
-    "create", "prepare", "finish", "complete", "start", "eine", "einen", "einem",
-  ]);
-  const words = task
-    .split(/\s+/)
-    .map((w) => w.replace(/[^a-zäöüß]/gi, ""))
-    .filter((w) => w.length > 2 && !stopWords.has(w));
-
-  if (words.length > 0) {
-    const action = words[0];
-    const object = words.slice(1, 4).join(" ") || topic;
+  if (hasAny(task, ["paint", "painting", "draw", "drawing", "sketch", "canvas", "malen", "gemälde", "zeichnen", "aquarell"])) {
     return subtasks([
-      `Gather what you need to ${action} ${object}`,
-      `Do a 10-minute starter on ${object} — messy is fine`,
-      `Note the very next small step for ${object}`,
+      "Find the piece and pick ONE small area that still needs work",
+      "Set out only the brushes and colors needed for that spot",
+      "Paint that area for 10 minutes, then stop and jot the next tiny step",
     ]);
   }
 
-  return subtasks([
-    `Write down what "done" means for "${topic}"`,
-    `Do one 5-minute starter step on "${topic}"`,
-    `Pick the next action before you stop working on "${topic}"`,
-  ]);
+  if (
+    hasAny(task, ["finish", "complete", "continue", "resume", "beenden", "weitermachen"]) &&
+    hasAny(task, ["start", "started", "begun", "angefangen"])
+  ) {
+    const thing = coreThing(raw) || topic;
+    return subtasks([
+      `Find your ${thing} and note what's actually still unfinished`,
+      "Pick the smallest bit left — one corner, one section, 10 minutes max",
+      "Do only that bit, then write the next micro-step before you walk away",
+    ]);
+  }
+
+  if (hasAny(task, ["finish", "complete", "beenden", "fertig"])) {
+    const thing = coreThing(raw) || topic;
+    return subtasks([
+      `Look at "${thing}" and list what's still undone (max 3 bullets)`,
+      "Choose the easiest remaining piece and set a 10-minute timer",
+      "Stop when the timer ends — partial progress still counts",
+    ]);
+  }
+
+  return genericBreakdown(raw, task);
 }
