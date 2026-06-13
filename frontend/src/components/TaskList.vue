@@ -1,7 +1,7 @@
 <script>
 import memeImageSrc from "../assets/itsfine.png";
 import { API_BASE } from "../config.js";
-import { createTask, fetchTasks } from "../api.js";
+import { createTask, deleteTaskById, fetchTasks } from "../api.js";
 import { createBreakdown } from "../utils/taskBreakdown.js";
 import { pickExampleMissions } from "../utils/exampleMissions.js";
 
@@ -112,10 +112,17 @@ export default {
       task.subtasks = createBreakdown(title);
       this.cancelEdit();
     },
-    deleteTask(taskId) {
-      this.tasks = this.tasks.filter((task) => task.id !== taskId);
-      if (this.editingTaskId === taskId) {
-        this.cancelEdit();
+    async deleteTask(taskId) {
+      try {
+        await deleteTaskById(taskId);
+        this.tasks = this.tasks.filter((task) => task.id !== taskId);
+        if (this.editingTaskId === taskId) {
+          this.cancelEdit();
+        }
+        this.apiStatus = "Aufgabe gelöscht.";
+      } catch (error) {
+        this.apiStatus = `Löschen fehlgeschlagen (${API_BASE}/tasks/${taskId}).`;
+        console.error(error);
       }
     },
     addExampleTasks() {

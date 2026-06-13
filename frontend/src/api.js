@@ -31,6 +31,15 @@ export async function fetchTasks() {
   return data.map(mapApiTask);
 }
 
+export async function deleteTaskById(id) {
+  const response = await fetch(`${API_BASE}/tasks/${id}`, {
+    method: "DELETE",
+  });
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+}
+
 export async function createTask(task) {
   const response = await fetch(`${API_BASE}/tasks`, {
     method: "POST",
