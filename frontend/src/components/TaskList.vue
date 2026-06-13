@@ -1,7 +1,7 @@
 <script>
 import memeImageSrc from "../assets/itsfine.png";
 import { API_BASE } from "../config.js";
-import { createTask, deleteTaskById, fetchTasks } from "../api.js";
+import { createTask, deleteTaskById, fetchTasks, updateTask } from "../api.js";
 import { createBreakdown } from "../utils/taskBreakdown.js";
 import { pickExampleMissions } from "../utils/exampleMissions.js";
 
@@ -68,15 +68,31 @@ export default {
     completedSubtaskCount(task) {
       return task.subtasks.filter((subtask) => subtask.done).length;
     },
-    markDone(taskId) {
+    async persistTaskProgress(task) {
+      if (!task.id) {
+        return;
+      }
+      try {
+        const updated = await updateTask(task);
+        const index = this.tasks.findIndex((item) => item.id === task.id);
+        if (index !== -1) {
+          this.tasks[index] = updated;
+        }
+      } catch (error) {
+        this.apiStatus = `Fortschritt nicht gespeichert (${API_BASE}/tasks/${task.id}).`;
+        console.error(error);
+      }
+    },
+    async markDone(taskId) {
       const task = this.tasks.find((item) => item.id === taskId);
       if (!task || task.done) {
         return;
       }
 
       task.done = true;
+      await this.persistTaskProgress(task);
     },
-    toggleSubtask(taskId, subtaskIndex) {
+    async toggleSubtask(taskId, subtaskIndex) {
       const task = this.tasks.find((item) => item.id === taskId);
       if (!task) {
         return;
@@ -87,6 +103,7 @@ export default {
 
       const allDone = task.subtasks.length > 0 && task.subtasks.every((item) => item.done);
       task.done = allDone;
+      await this.persistTaskProgress(task);
     },
     startEdit(task) {
       this.editingTaskId = task.id;

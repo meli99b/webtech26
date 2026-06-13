@@ -6,6 +6,7 @@ export function mapApiTask(apiTask) {
     title: apiTask.title,
     done: apiTask.completed,
     subtasks: (apiTask.subtasks || []).map((step) => ({
+      id: step.id,
       text: step.title,
       done: step.completed,
     })),
@@ -38,6 +39,27 @@ export async function deleteTaskById(id) {
   if (!response.ok) {
     throw new Error(`HTTP ${response.status}`);
   }
+}
+
+export async function updateTask(task) {
+  const response = await fetch(`${API_BASE}/tasks/${task.id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      completed: task.done,
+      subtasks: (task.subtasks || [])
+        .filter((step) => step.id != null)
+        .map((step) => ({
+          id: step.id,
+          completed: step.done,
+        })),
+    }),
+  });
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+  const data = await response.json();
+  return mapApiTask(data);
 }
 
 export async function createTask(task) {
