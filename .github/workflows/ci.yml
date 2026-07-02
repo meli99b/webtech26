@@ -13,7 +13,7 @@ jobs:
           distribution: temurin
           java-version: "21"
       - name: Run backend tests
-        run: ./gradlew test
+        run: chmod +x gradlew && ./gradlew test
 
   frontend:
     runs-on: ubuntu-latest
