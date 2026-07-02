@@ -70,7 +70,7 @@ Frontend und Backend laufen online; das Frontend holt die Aufgaben per `GET /tas
 
 ## Meilenstein 4 (PostgreSQL + POST)
 
-Wie in **WebTech Thema 7 (Datenbankanbindung)**:
+
 1. PostgreSQL auf Render erstellen
 2. JPA-Entities (`Task`, `Subtask`), `TaskRepository`, `TaskService`
 3. `GET /tasks` liest aus der DB, `POST /tasks` speichert eine neue Aufgabe

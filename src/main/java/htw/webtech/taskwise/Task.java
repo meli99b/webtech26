@@ -75,4 +75,8 @@ public class Task {
         subtasks.add(subtask);
         subtask.setTask(this);
     }
+
+    public void clearSubtasks() {
+        subtasks.clear();
+    }
 }

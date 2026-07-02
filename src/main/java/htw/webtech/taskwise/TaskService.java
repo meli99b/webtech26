@@ -47,12 +47,22 @@ public class TaskService {
 
     @Transactional
     public Task update(Long id, UpdateTaskRequest request) {
-        Task task = taskRepository.findById(id)
+        Task task = taskRepository.findByIdWithSubtasks(id)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Task not found"));
 
         task.setCompleted(request.isCompleted());
 
-        if (request.getSubtasks() != null) {
+        if (request.getTitle() != null && !request.getTitle().isBlank()) {
+            task.setTitle(request.getTitle().trim());
+        }
+
+        if (request.getReplaceSubtasks() != null) {
+            task.clearSubtasks();
+            task.setCompleted(false);
+            for (CreateSubtaskRequest subtaskRequest : request.getReplaceSubtasks()) {
+                task.addSubtask(new Subtask(subtaskRequest.getTitle(), false));
+            }
+        } else if (request.getSubtasks() != null) {
             for (UpdateSubtaskRequest subtaskRequest : request.getSubtasks()) {
                 task.getSubtasks().stream()
                         .filter(subtask -> subtask.getId().equals(subtaskRequest.getId()))

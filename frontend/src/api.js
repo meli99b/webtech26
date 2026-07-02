@@ -41,19 +41,32 @@ export async function deleteTaskById(id) {
   }
 }
 
-export async function updateTask(task) {
+export async function updateTask(task, { replaceSubtasks = false } = {}) {
+  const body = {
+    completed: task.done,
+  };
+
+  if (task.title) {
+    body.title = task.title;
+  }
+
+  if (replaceSubtasks) {
+    body.replaceSubtasks = (task.subtasks || []).map((step) => ({
+      title: step.text,
+    }));
+  } else {
+    body.subtasks = (task.subtasks || [])
+      .filter((step) => step.id != null)
+      .map((step) => ({
+        id: step.id,
+        completed: step.done,
+      }));
+  }
+
   const response = await fetch(`${API_BASE}/tasks/${task.id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      completed: task.done,
-      subtasks: (task.subtasks || [])
-        .filter((step) => step.id != null)
-        .map((step) => ({
-          id: step.id,
-          completed: step.done,
-        })),
-    }),
+    body: JSON.stringify(body),
   });
   if (!response.ok) {
     throw new Error(`HTTP ${response.status}`);

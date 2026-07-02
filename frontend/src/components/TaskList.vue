@@ -4,6 +4,7 @@ import { API_BASE } from "../config.js";
 import { createTask, deleteTaskById, fetchTasks, updateTask } from "../api.js";
 import { createBreakdown } from "../utils/taskBreakdown.js";
 import { pickExampleMissions } from "../utils/exampleMissions.js";
+import { shouldShowMemePopup } from "../utils/memePopup.js";
 
 export default {
   name: "TaskList",
@@ -30,7 +31,7 @@ export default {
     openTasks: {
       immediate: true,
       handler(newValue) {
-        this.showMemePopup = newValue.length > 10;
+        this.showMemePopup = shouldShowMemePopup(newValue.length);
       },
     },
   },
@@ -113,7 +114,7 @@ export default {
       this.editingTaskId = null;
       this.editTitle = "";
     },
-    saveEdit(taskId) {
+    async saveEdit(taskId) {
       const title = this.editTitle.trim();
       if (!title) {
         return;
@@ -124,10 +125,25 @@ export default {
         return;
       }
 
-      task.title = title;
-      task.done = false;
-      task.subtasks = createBreakdown(title);
-      this.cancelEdit();
+      const updatedDraft = {
+        ...task,
+        title,
+        done: false,
+        subtasks: createBreakdown(title),
+      };
+
+      try {
+        const saved = await updateTask(updatedDraft, { replaceSubtasks: true });
+        const index = this.tasks.findIndex((item) => item.id === taskId);
+        if (index !== -1) {
+          this.tasks[index] = saved;
+        }
+        this.apiStatus = "Aufgabe aktualisiert.";
+        this.cancelEdit();
+      } catch (error) {
+        this.apiStatus = `Bearbeiten fehlgeschlagen (${API_BASE}/tasks/${taskId}).`;
+        console.error(error);
+      }
     },
     async deleteTask(taskId) {
       try {
@@ -142,22 +158,21 @@ export default {
         console.error(error);
       }
     },
-    addExampleTasks() {
+    async addExampleTasks() {
       const existingTitles = this.tasks.map((task) => task.title);
       const picked = pickExampleMissions(existingTitles, 3);
-      let nextId = this.tasks.length
-        ? Math.max(...this.tasks.map((task) => task.id)) + 1
-        : 1;
 
-      picked.forEach((mission) => {
-        this.tasks.push({
-          id: nextId,
-          title: mission.title,
-          done: false,
-          subtasks: mission.subtasks,
-        });
-        nextId += 1;
-      });
+      try {
+        const saved = [];
+        for (const mission of picked) {
+          saved.push(await createTask(mission));
+        }
+        this.tasks.push(...saved);
+        this.apiStatus = `${saved.length} Missionen in der Datenbank gespeichert.`;
+      } catch (error) {
+        this.apiStatus = `Missionen konnten nicht gespeichert werden (${API_BASE}/tasks).`;
+        console.error(error);
+      }
     },
     closeMemePopup() {
       this.showMemePopup = false;
